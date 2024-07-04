@@ -70,6 +70,25 @@ router.post("/csvToJson", async (req, res) => {
       }
       saveJsonData(jsonObject);
       res.send(jsonObject);
+      const query = `
+      SELECT name, age, address, additional_info, id
+      FROM users
+      WHERE age < 20
+      UNION ALL
+      SELECT name, age, address, additional_info, id
+      FROM users
+      WHERE age BETWEEN 20 AND 40
+      UNION ALL
+      SELECT name, age, address, additional_info, id
+      FROM users
+      WHERE age BETWEEN 41 AND 60
+      UNION ALL
+      SELECT name, age, address, additional_info, id
+      FROM users
+      WHERE age > 60
+      `;
+      const result = await client.query(query);
+      console.log(result.rows);
       fs.writeFile(
         outPath,
         JSON.stringify(jsonObject, null, 2),
